@@ -1,0 +1,71 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul 23 21:01:27 2024
+
+@author: DELL
+"""
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Stylist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        #recommendations img {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personal Stylist</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" accept="image/*">
+        <button type="submit">Upload</button>
+    </form>
+    <div id="image-container"></div>
+    <h2>Recommendations:</h2>
+    <div id="recommendations"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the uploaded image
+                const imageContainer = document.getElementById('image-container');
+                imageContainer.innerHTML = `<img src="${URL.createObjectURL(document.getElementById('fileInput').files[0])}" alt="Uploaded Image">`;
+
+                // Display recommendations
+                const recommendationsDiv = document.getElementById('recommendations');
+                recommendationsDiv.innerHTML = '';
+                data.recommendations.forEach(url => {
+                    let img = document.createElement('img');
+                    img.src = url;
+                    recommendationsDiv.appendChild(img);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+    
